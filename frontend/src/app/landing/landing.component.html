@@ -1,0 +1,368 @@
+<main class="india-pattern-bg">
+  <!-- ═══ Navbar ═══ -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a routerLink="/" class="logo">
+        <img src="logo.png" alt="words2voice logo" class="logo-img" />
+        <span class="logo-text">words2voice</span>
+      </a>
+      <div class="nav-links">
+        <a routerLink="/about">About</a>
+        <a href="#languages">Languages</a>
+        <a href="#faq">FAQ</a>
+        <a routerLink="/contact">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <button class="theme-toggle" (click)="themeService.toggle()"
+          [attr.aria-label]="themeService.isDark ? 'Switch to day mode' : 'Switch to night mode'">
+          {{ themeService.isDark ? '☀️' : '🌙' }}
+        </button>
+        <div *ngIf="!isLoggedIn">
+          <a routerLink="/login" class="nav-btn btn-ghost" id="nav-login-btn">Log In</a>
+          <a routerLink="/signup" class="nav-btn btn-register" id="nav-register-btn">Register</a>
+        </div>
+        <div *ngIf="isLoggedIn">
+          <a routerLink="/studio" class="nav-btn btn-accent" id="nav-studio-btn">Studio</a>
+        </div>
+        </div>
+      <button class="mobile-menu-btn" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.open]="mobileMenuOpen">
+      <a routerLink="/about" (click)="mobileMenuOpen = false">About</a>
+      <a href="#languages" (click)="mobileMenuOpen = false">Languages</a>
+      <a href="#faq" (click)="mobileMenuOpen = false">FAQ</a>
+      <a routerLink="/contact" (click)="mobileMenuOpen = false">Contact</a>
+      <div *ngIf="!isLoggedIn">
+        <a routerLink="/login" (click)="mobileMenuOpen = false">Log In</a>
+        <a routerLink="/signup" (click)="mobileMenuOpen = false" class="mobile-register-link">Register</a>
+      </div>
+      <div *ngIf="isLoggedIn">
+        <a routerLink="/studio" class="btn-accent-mobile" (click)="mobileMenuOpen = false">Studio</a>
+      </div>
+      <button class="theme-toggle-mobile" (click)="themeService.toggle()">
+        {{ themeService.isDark ? '☀️ Day Mode' : '🌙 Night Mode' }}
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ Hero Section ═══ -->
+  <section class="hero">
+    <div class="hero-glow hero-glow-left"></div>
+    <div class="hero-glow hero-glow-right"></div>
+    <div class="hero-content">
+      <div class="hero-badges">
+        <div class="hero-badge saffron">🇮🇳 Made for India</div>
+        <div class="hero-badge free">✨ Fully Free</div>
+        <div class="hero-badge beta">Public Beta</div>
+      </div>
+      <h1>Free Hindi, English & Hinglish <span class="gradient-text">text to speech</span> AI voice generator</h1>
+      <p class="hero-subtitle">Convert Hindi (हिंदी), English India and Hinglish text into natural Indian AI voiceovers
+        for YouTube, Reels, ads, podcasts, education and accessibility. No credit card. No sign-up to try.</p>
+      <div class="hero-cta-row">
+        <a routerLink="/studio" class="btn-hero-primary" id="hero-start-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          Start Creating
+        </a>
+        <a routerLink="/about" class="btn-hero-ghost">Learn More →</a>
+      </div>
+      <div class="hero-trust">
+        <span>🎤 Indian Accent (Devanagari-Latin) </span>
+        <span>⚡ Instant Results</span>
+        <span>🗣️ Hindi-English</span>
+      </div>
+    </div>
+    <!-- Animated waveform visual -->
+    <div class="hero-wave-visual">
+      <div class="wave-bars">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Live Demo ═══ -->
+  <section class="demo-section" id="demo">
+    <div class="demo-card glass">
+      <div class="demo-header">
+        <div class="demo-label-group">
+          <span class="demo-dot"></span>
+          <span class="demo-label">Try it live — no signup needed</span>
+        </div>
+        <span class="char-counter" [class.max]="textLength >= maxLength">{{ textLength }} / {{ maxLength }}</span>
+      </div>
+      <div class="textarea-wrap">
+        <textarea [(ngModel)]="textToSynthesize" [maxlength]="maxLength"
+          placeholder="Type your Hindi / Hinglish text here..." rows="4">
+        </textarea>
+      </div>
+
+      <!-- Quick Start Samples -->
+      <div class="landing-samples">
+        <span class="sample-label">Try:</span>
+        <button class="sample-chip"
+          (click)="textToSynthesize = 'इस *शानदार* product को आज ही खरीदें,,, Link Description में है.'">Promo</button>
+        <button class="sample-chip"
+          (click)="textToSynthesize = 'Hello,,, आप कैसे हैं??? मुझे आपकी आवाज़ में कुछ सुनना है.'">Casual Greeting</button>
+        <button class="sample-chip" (click)="textToSynthesize = 'आज की ताजा खबर: \nDelhi में मौसम का मिजाज-बदला...'">News
+          Style</button>
+
+      </div>
+      <div class="demo-controls">
+        <div class="voice-select-wrap">
+          <select [(ngModel)]="selectedVoiceId" id="voice-select">
+            <option *ngFor="let voice of voices" [value]="getVoiceId(voice)">
+              {{ getVoiceName(voice) }} · {{ getVoiceStyle(voice) }}
+            </option>
+          </select>
+        </div>
+        <button class="btn-generate" (click)="onListen()" [disabled]="isLoading || !textToSynthesize?.trim()"
+          id="btn-demo-generate">
+          <span *ngIf="!isLoading" class="btn-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            Generate
+          </span>
+          <span *ngIf="isLoading" class="btn-content">
+            <span class="soundwave-loader">
+              <span></span><span></span><span></span><span></span>
+            </span>
+            Generating...
+          </span>
+        </button>
+      </div>
+
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <div class="audio-result" *ngIf="audioUrl">
+        <div class="audio-ready-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18V5l12-2v13" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="18" cy="16" r="3" />
+          </svg>
+          Your audio is ready!
+        </div>
+        <audio [src]="audioUrl" controls autoplay id="landing-audio-player"></audio>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Stats Bar ═══ -->
+  <section class="stats-bar" *ngIf="totalGenerations > 20">
+    <div class="stat-item">
+      <span class="stat-number">{{ totalGenerations | number }}</span>
+      <span class="stat-label">Voices Generated</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-number">{{ totalUsers > 0 ? (totalUsers | number) : '—' }}</span>
+      <span class="stat-label">Registered Creators</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-number">{{ voices.length }}</span>
+      <span class="stat-label">Voice Models</span>
+    </div>
+  </section>
+
+  <!-- ═══ How It Works ═══ -->
+  <section class="how-it-works-section">
+    <div class="section-tag">How It Works</div>
+    <h2 class="section-title">From text to voice in <span class="gradient-text">3 easy steps</span></h2>
+    <div class="video-intro">
+      <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/vdj-TANClWE?rel=0"
+        title="words2voice demo video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Type or Paste</h3>
+        <p>Enter your Hindi or Hinglish script into the studio editor.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Choose a Voice</h3>
+        <p>Select from our growing library of authentic Indian voices.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Generate & Download</h3>
+        <p>Get a high-quality WAV audio file ready for your project instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Features ═══ -->
+  <section class="features-section">
+    <div class="section-tag">Why words2voice?</div>
+    <h2 class="section-title">Built for <span class="gradient-text">Indian Creators</span></h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon saffron">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        </div>
+        <h3>Private & Secure</h3>
+        <p>Your scripts stay yours. We never use your data to train models.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon teal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h3>100% Free</h3>
+        <p>No hidden fees, no credit card, no trial limits. Free while we're testing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon violet">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </div>
+        <h3>Natural Hindi</h3>
+        <p>Optimized for real conversational Hindi. No robotic mispronunciations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon rose">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+        </div>
+        <h3>Instant Results</h3>
+        <p>Type, generate, download. Ready-to-use voiceovers in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Use Cases ═══ -->
+  <section class="use-cases-section">
+    <div class="section-tag">Use Cases</div>
+    <h2 class="section-title">Your voice, your story</h2>
+    <div class="use-cases-grid">
+      <div class="use-case-card">
+        <div class="uc-icon">📱</div>
+        <h4>YouTube & Reels</h4>
+        <p>Voiceovers for Shorts and stories that actually sound natural.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="uc-icon">🛍️</div>
+        <h4>Small Business Ads</h4>
+        <p>Create high-quality audio ads for your products in seconds.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="uc-icon">📖</div>
+        <h4>Storytelling</h4>
+        <p>Narrate family stories or content with warmth and emotion.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SEO Language Landing Blocks ═══ -->
+  <section class="seo-content-section" id="languages">
+    <div class="section-tag">Languages & accents</div>
+    <h2 class="section-title">Hindi text to speech made for real Indian creators</h2>
+    <div class="seo-copy-grid">
+      <article class="seo-copy-card">
+        <h3>Hindi AI voice generator</h3>
+        <p>Paste Devanagari Hindi text and generate clear, natural speech for stories, explainers, devotional content,
+          news reads, lessons and social media videos.</p>
+      </article>
+      <article class="seo-copy-card">
+        <h3>Hinglish text to voice</h3>
+        <p>Write Hindi in English letters like “namaste dosto” and create voiceovers that fit Indian scripts, creator
+          captions and everyday conversational content.</p>
+      </article>
+      <article class="seo-copy-card">
+        <h3>English India TTS</h3>
+        <p>Create Indian-accent friendly English voiceovers for product demos, tutorials, customer messages, educational
+          videos and business announcements.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="faq-section" id="faq">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-title">Text to speech questions creators search for</h2>
+    <div class="faq-list">
+      <details open>
+        <summary>Can I convert Hindi text to speech for free?</summary>
+        <p>Yes. words2voice lets you try Hindi text-to-speech generation free during public beta, with no credit card
+          required.</p>
+      </details>
+      <details>
+        <summary>Does words2voice support Hinglish?</summary>
+        <p>Yes. You can enter Hindi in Devanagari and English in Roman letters, making it useful for Hinglish scripts
+          used in Shorts, Reels and ads.</p>
+      </details>
+      <details>
+        <summary>What can I make with AI text to speech?</summary>
+        <p>You can generate voiceovers for YouTube videos, Instagram Reels, podcasts, audiobooks, lessons, product ads,
+          business greetings and accessibility features.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section">
+    <div class="cta-card glass">
+      <div class="cta-glow"></div>
+      <div class="cta-badge">✨ Fully Free · No Credit Card</div>
+      <h2>Ready to create your first voice?</h2>
+      <p>Sign up free and get 5,000 characters per day.</p>
+      <div class="cta-buttons">
+        <a routerLink="/signup" class="btn-accent-lg" id="cta-signup-btn">Create Free Account</a>
+        <a routerLink="/about" class="btn-ghost-lg">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="words2voice" class="footer-logo-img" />
+        <span>words2voice</span>
+      </div>
+      <nav class="footer-nav">
+        <a routerLink="/about">About</a>
+        <a routerLink="/contact">Contact</a>
+        <a routerLink="/login">Login</a>
+        <a routerLink="/signup">Register</a>
+        <a routerLink="/privacy">Privacy</a>
+        <a routerLink="/terms">Terms</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-india">🇮🇳 Proudly built for India</span>
+      &copy; 2026 words2voice. Open-source TTS for India.
+    </div>
+  </footer>
+
+</main>
