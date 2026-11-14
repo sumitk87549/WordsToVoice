@@ -22,3 +22,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+/frontend/.vscode/
+/frontend/.angular/cache/22.0.7/frontend/
+/frontend/dist/frontend/dist/frontend/
+/frontend/node_modules/
