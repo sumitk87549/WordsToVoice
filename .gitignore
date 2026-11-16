@@ -26,3 +26,5 @@ replay_pid*
 /frontend/.angular/cache/22.0.7/frontend/
 /frontend/dist/frontend/dist/frontend/
 /frontend/node_modules/
+.JIRA_API_TOKEN.txt
+jira_bulk_create_fixed.py
